@@ -6,10 +6,8 @@ def forward(*args, **kwargs):
     number_of_joints = int(input('Number of joints: '))
     matrices = []
     for i in range(number_of_joints):
-        a = float(input(f'a for {i+1}th joint: '))
-        alpha = float(input(f'alpha for {i+1}th joint: '))
-        d = float(input(f'd for {i+1}th joint: '))
-        theta = float(input(f'theta for {i+1}th joint: '))
+        a, alpha, d, theta = [float(i) for i in input(
+            f'Enter a, alpha, d, theta for joint {i+1}: ').split(' ')]
         matrices.append(A_matrix(a, alpha, d, theta))
     A = multiply_matrices([a.matrix for a in matrices])
     print(np.round(A, decimals=3))
