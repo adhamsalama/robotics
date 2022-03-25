@@ -46,6 +46,8 @@ def inverse(*args, **kwargs):
         matrices.append(inverse_matrix(a, alpha, d, theta))
 
     A = multiply_matrices([a.matrix for a in matrices])
+    x, y, z,Φ,θ,Ψ = [int(i) for i in input(
+            f'Enter End-effector pose (x , y , z , Φ , θ , Ψ): ').split(' ')]
     print(A)
     
     # counter = 0
