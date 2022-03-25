@@ -1,4 +1,5 @@
 from inverse_matrix import inverse_matrix
+from Roll_Pith_Yaw import Roll_Pith_Yaw
 import numpy as np
 import sympy as sp
 from math import pi, radians 
@@ -49,6 +50,9 @@ def inverse(*args, **kwargs):
     x, y, z,Φ,θ,Ψ = [int(i) for i in input(
             f'Enter End-effector pose (x , y , z , Φ , θ , Ψ): ').split(' ')]
     print(A)
+    print("=======================================")
+    B =Roll_Pith_Yaw(Φ,θ,Ψ)
+    print(B.matrix)
     
     # counter = 0
     # for i in range(len(A)):
