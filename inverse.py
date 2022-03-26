@@ -1,77 +1,98 @@
-from inverse_matrix import inverse_matrix
-from Roll_Pith_Yaw import Roll_Pith_Yaw
+from symMatrixA import symMatrixA
+from RollPithYaw import RollPithYaw
 import numpy as np
-import sympy as sp
-from math import pi, radians 
+from sympy import *
+# from math import pi 
 
 def inverse(*args, **kwargs):
     
-    
-    θ1,θ2,θ3,θ4,θ5,θ6,d1,d2,d3,d4,d5,d6=sp.symbols('θ1 θ2 θ3 θ4 θ5 θ6 d1 d2 d3 d4 d5 d6')
-    arrangment= input('Enter the robot arrangment: ')
-    matrices = []
-    for i in range(len(arrangment)):
-        if(arrangment[i]=='R' or arrangment[i]=='r'):
-            a, alpha, d = [int(i) for i in input(
+    robotArrangement= input('Enter the robot arrangement (eg. RRP): ')
+    A_Matrices = []
+    for i in range(len(robotArrangement)):
+        if(robotArrangement[i]=='R' or robotArrangement[i]=='r'):
+            a, alpha, d = [float(i) for i in input(
             f'Enter a, alpha, d for joint {i+1}: ').split(' ')]
-            
-            if(i+1==1):
-                theta = θ1
-                
-            if(i+1==2):
-                theta = θ2
-            if(i+1==3):
-                theta = θ3
-            if(i+1==4):
-                theta = θ4
-            if(i+1==5):
-                theta = θ5
-            if(i+1==6):
-                theta = θ6
-        if(arrangment[i]=='P' or arrangment[i]=='p'):
-            a, alpha, theta = [int(i) for i in input(
+            newTheta = symbols(f'θ{i+1}')
+            theta = newTheta
+        if(robotArrangement[i]=='P' or robotArrangement[i]=='p'):
+            a, alpha, theta = [float(i) for i in input(
             f'Enter a, alpha, θ for joint {i+1}: ').split(' ')]
-             
-            if(i+1==1):
-                d = d1
-            if(i+1==2):
-                d = d2
-            if(i+1==3):
-                d = d3
-            if(i+1==4):
-                d = d4
-            if(i+1==5):
-                d = d5
-            if(i+1==6):
-                d = d6
-        matrices.append(inverse_matrix(a, alpha, d, theta))
+            newD = symbols(f'd{i+1}')
+            d = newD
+        A_Matrices.append(symMatrixA(a, alpha, d, theta))
 
-    A = multiply_matrices([a.matrix for a in matrices])
-    x, y, z,Φ,θ,Ψ = [int(i) for i in input(
-            f'Enter End-effector pose (x , y , z , Φ , θ , Ψ): ').split(' ')]
-    print(A)
-    print("=======================================")
-    B =Roll_Pith_Yaw(Φ,θ,Ψ)
-    print(B.matrix)
+    homoT = multiplyMatrices([a.matrix for a in A_Matrices])
+
+    Xe, Ye, Ze, Φ, θ, Ψ = [float(i) for i in input(
+            f'Enter End-effector pose (Xe, Ye, Ze, Φ, θ, Ψ): ').split(' ')]
+
+    RBY = RollPithYaw(Φ,θ,Ψ)
+
+    # print()
+
+    # print(homoT) 
+    # print(RBY.matrix)
+
+    # Position matrix equations
+    xEq = Eq(homoT[0][3], Xe)
+    yEq = Eq(homoT[1][3], Ye)
+    zEq = Eq(homoT[2][3], Ze)
+
+    # Rotation matrix equations
+    r11Eq = Eq(homoT[0][0], RBY.matrix[0][0])
+    r12Eq = Eq(homoT[0][1], RBY.matrix[0][1])
+    r13Eq = Eq(homoT[0][2], RBY.matrix[0][2])
+
+    r21Eq = Eq(homoT[1][0], RBY.matrix[1][0])
+    r22Eq = Eq(homoT[1][1], RBY.matrix[1][1])
+    r23Eq = Eq(homoT[1][2], RBY.matrix[1][2])
+
+    r31Eq = Eq(homoT[2][0], RBY.matrix[2][0])
+    r32Eq = Eq(homoT[2][1], RBY.matrix[2][1])
+    r33Eq = Eq(homoT[2][2], RBY.matrix[2][2])
+
+    result = solve([xEq, yEq, zEq], dict=True)
+
+    for i in range(len(result)):
+        for key, value in result[i].items():
+            stringKey = f'{key}'
+            if stringKey[0] == 'θ':
+                result[i][key] = N(value*180/pi,5)
+            else:
+                result[i][key] = N(value,5)
+    print()
+    print(result)
+    print()
     
     # counter = 0
-    # for i in range(len(A)):
+    # for i in range(len(homoT)):
     #     for j in range(4):
-    #         print(type (A[i][j]) != np.number)
-    #         print(A[i][j].round(2))
+    #         print(type (homoT[i][j]) != np.number)
+    #         print(homoT[i][j].round(2))
     #         counter=counter +1
     # print(counter)
-    
-    
-   
-    
-        
-        
 
-def multiply_matrices(matrices):
-    result = matrices[0]
-    n = len(matrices)
+def multiplyMatrices(A_Matrices):
+    result = A_Matrices[0]
+    n = len(A_Matrices)
     for i in range(1, n):
-        result = np.dot(result, matrices[i])
+        result = np.dot(result, A_Matrices[i])
     return result
-        
+
+# Examples:
+
+    # RR
+    # [ 2 0 0 ]
+    # [ 2 0 0 ]
+    # Xe = 2.25  Ye = 2.94
+    # θ1 values in degree  = 30.323, 74.823
+    # θ2 values in degree = 44.499, -44.499
+
+    # RPP
+    # [ 0 0 1 ]
+    # [ 0 -90 0 ]
+    # [ 0 0 0 ]
+    # Xe = 1    Ye = -1.2   Ze = 2
+    # θ1 values in degree  = 39.806
+    # d2 values in rad = 1.0000
+    # d3 values in rad = 1.5620
