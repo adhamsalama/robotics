@@ -1,5 +1,5 @@
-from inverse import symMatrixA
-from inverse import RollPithYaw
+from inverse.symMatrixA import symMatrixA
+from inverse.RollPithYaw import RollPithYaw
 import numpy as np
 from sympy import *
 # from math import pi
