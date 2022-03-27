@@ -1,9 +1,9 @@
 import math
-from A_matrix import A_matrix
+from forward.A_matrix import A_matrix
 import numpy as np
 
 
-def forward(*args, **kwargs):
+def forward_kinematics(*args, **kwargs):
     number_of_joints = int(input('Number of joints: '))
     matrices = []
     for i in range(number_of_joints):
@@ -31,7 +31,9 @@ def end_effector_position(T):
         last_row.append(T[n - 1][i])
 
     angl = []
-    theta = - math.degrees(math.atan2(last_row[0], math.sqrt(1 - math.pow(last_row[0], 2))))
+    theta = - \
+        math.degrees(math.atan2(last_row[0], math.sqrt(
+            1 - math.pow(last_row[0], 2))))
     angl.append(theta)
 
     phi = math.degrees(math.atan2(first_col[1], first_col[0]))
