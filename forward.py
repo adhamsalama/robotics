@@ -1,3 +1,4 @@
+import math
 from A_matrix import A_matrix
 import numpy as np
 
@@ -14,7 +15,7 @@ def forward(*args, **kwargs):
     print("\nT = \n", A)
     end_effector_position(A)
 
- 
+
 def end_effector_position(T):
     n = len(T) - 1
     p = []
@@ -22,26 +23,27 @@ def end_effector_position(T):
         p.append(T[i][n])
     print("\nXe Ye Ze :", p)
 
-    col = []
-    row = []
+    first_col = []
+    last_row = []
     for i in range(n):
-        col.append(T[i][0])
+        first_col.append(T[i][0])
     for i in range(n):
-        row.append(T[n - 1][i])
+        last_row.append(T[n - 1][i])
 
-    tan_phi = col[1] / col[0] if col[0] else 0
-    tan_theta = row[0] / math.sqrt(1-math.pow(row[0], 2)) if row[0] else 0
-    tan_epsi = row[1] / row[2] if row[2] else 0
+    angl = []
+    theta = - math.degrees(math.atan2(last_row[0], math.sqrt(1 - math.pow(last_row[0], 2))))
+    angl.append(theta)
 
-    phi = math.degrees(math.atan(tan_phi))
-    theta = math.degrees(math.atan(tan_theta))
-    epsi = math.degrees(math.atan(tan_epsi))
+    phi = math.degrees(math.atan2(first_col[1], first_col[0]))
+    angl.append(phi)
 
-    print("\nΦ =", np.round(phi, 3))
-    print("Θ =", np.round(theta, 3))
-    print("Ψ =", np.round(epsi, 3))
-    
-    
+    epsi = math.degrees(math.atan2(last_row[1], last_row[2]))
+    angl.append(epsi)
+
+    for i in range(len(angl)):
+        angl[i] %= 360
+    print("Θ, Φ, Ψ : ", angl)
+
 
 def multiply_matrices(matrices):
     result = matrices[0]
