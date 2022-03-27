@@ -81,12 +81,23 @@ def multiplyMatrices(A_Matrices):
 
 # Examples:
 
-    # RR
-    # [ 2 0 0 ]
-    # [ 2 0 0 ]
-    # Xe = 2.25  Ye = 2.94
-    # θ1 values in degree  = 30.323, 74.823
-    # θ2 values in degree = 44.499, -44.499
+    # Input:
+        # RR
+        # [ 2 0 0 ]
+        # [ 2 0 0 ]
+        # Xe = 2.25  Ye = 2.94
+    # Output:
+        # [{θ1: 30.323, θ2: 44.499}, {θ1: 74.823, θ2: -44.499}]
+    
+    # Input:
+        # RPP
+        # [ 0 0 0.1 ]
+        # [ 0 -90 0 ]
+        # [ 0 0 0 ]
+        # Xe = -0.1    Ye = 0   Ze = 0.2
+    # Output:
+        # [{θ1: 270.00, d3: -0.10000, d2: 0.10000}, {θ1: 90.000, d3: 0.10000, d2: 0.10000}]
+
 
     # RPP
     # [ 0 0 1 ]
@@ -94,5 +105,5 @@ def multiplyMatrices(A_Matrices):
     # [ 0 0 0 ]
     # Xe = 1    Ye = -1.2   Ze = 2
     # θ1 values in degree  = 39.806
-    # d2 values in rad = 1.0000
-    # d3 values in rad = 1.5620
+    # d2 values in degree = 1.0000
+    # d3 values in degree = 1.5620
