@@ -1,8 +1,12 @@
+from curses import A_DIM
 from inverse.symMatrixA import symMatrixA
 from inverse.RollPithYaw import RollPithYaw
 from inverse.inverse_kinematics import multiplyMatrices
 from inverse.inverse_kinematics import solveInverseKinematics
 from sympy import *
+from forward.A_matrix import A_matrix
+from inverse_jacobian.inverse_jacobian_function import calc_inverse_jacobian, rotate
+import numpy as np
 
 # x, y, x', y'
 x = []
@@ -13,8 +17,11 @@ yDot = []
 zDot = []
 θ1 = []
 θ2 = []
+θ1Dot = []
+θ2Dot = []
 
 def trajectory(*args, **kwargs):
+    params = []
     robotArrangement = input('Enter the robot arrangement (eg. RRP): ')
     A_Matrices = []
     for i in range(len(robotArrangement)):
@@ -23,6 +30,7 @@ def trajectory(*args, **kwargs):
                 f'Enter a, alpha, d for joint {i + 1}: ').split(' ')]
             newTheta = symbols(f'θ{i + 1}')
             theta = newTheta
+            params.append([a,alpha,d])
         if (robotArrangement[i] == 'P' or robotArrangement[i] == 'p'):
             a, alpha, theta = [float(i) for i in input(
                 f'Enter a, alpha, θ for joint {i + 1}: ').split(' ')]
@@ -42,6 +50,9 @@ def trajectory(*args, **kwargs):
     getJointAngels(homoT, interval_list)
     
     for interval in range(len(interval_list)):
+        calc_θDot(params, interval)
+    
+    for interval in range(len(interval_list)):
         table.append({
             't': interval_list[interval],
             'x': x[interval],
@@ -49,13 +60,15 @@ def trajectory(*args, **kwargs):
             'θ1': θ1[interval],
             'θ2': θ2[interval],
             'x_dot': xDot[interval],
-            'y_dot': yDot[interval]
+            'y_dot': yDot[interval],
+            'θ1_dot': θ1Dot[interval],
+            'θ2_dot': θ2Dot[interval]
         })
-
+    
     for i in range(len(table)):
         print(table[i])
 
-
+        
 def solve_equation(expX, expY, interval_list):
     t = symbols('t')
 
@@ -91,3 +104,22 @@ def getJointAngels(homoT, interval_list):
                     secondAngle.append(result[i][key])
         θ1.append(firstAngle)
         θ2.append(secondAngle)
+        
+def calc_θDot(params,i):
+    θ1Dot.append([])
+    θ2Dot.append([])
+    zeta = [[xDot[i]],[yDot[i]],[0],[0],[0],[0]]
+    matrices = []
+    matrices.append(A_matrix(params[0][0],params[0][1],params[0][2], θ1[i][0]))
+    matrices.append(A_matrix(params[0][0],params[0][1],params[0][2], θ2[i][0]))
+    invJac = calc_inverse_jacobian('rr',matrices)
+    ret = np.dot(invJac, zeta)
+    θ1Dot[i].append(N(ret[0][0],5))
+    θ2Dot[i].append(N(ret[1][0],5))
+    matrices = []
+    matrices.append(A_matrix(params[0][0],params[0][1],params[0][2], θ1[i][1]))
+    matrices.append(A_matrix(params[0][0],params[0][1],params[0][2], θ2[i][1]))
+    invJac = calc_inverse_jacobian('rr',matrices)
+    ret = np.dot(invJac, zeta)
+    θ1Dot[i].append(N(ret[0][0],5))
+    θ2Dot[i].append(N(ret[1][0],5))
