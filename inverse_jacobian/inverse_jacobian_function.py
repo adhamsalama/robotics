@@ -13,8 +13,8 @@ def inverse_jacobian():
         matrices.append(A_matrix(a, alpha, d, theta))
     
     result = calc_inverse_jacobian(robotArrangement , matrices)
-    for i in range(len(robotArrangement)):
-        for j in range(6):
+    for i in range(len(result)):
+        for j in range(len(result[0])):
             print(result[i][j], end='\t')
         print()
         
@@ -23,7 +23,8 @@ def calc_inverse_jacobian(robotArrangement , matrices):
     jac = calc_jacobian(robotArrangement , matrices)
     jacT = rotate(jac, len(robotArrangement))
     jacTdotJac = np.dot(jacT, jac)
-    inverseJacobianResult = np.dot(jacTdotJac,jacT)
+    jacTdotJac_inverse = np.linalg.inv(jacTdotJac)
+    inverseJacobianResult = np.dot(jacTdotJac_inverse,jacT)
     inverseJacobianResult = np.round(inverseJacobianResult, decimals=3)
     return inverseJacobianResult
 
