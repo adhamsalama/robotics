@@ -52,7 +52,30 @@ def inverse_kinematics(*args, **kwargs):
     r32Eq = Eq(homoT[2][1], RBY.matrix[2][1])
     r33Eq = Eq(homoT[2][2], RBY.matrix[2][2])
 
-    result = solve([xEq, yEq, zEq], dict=True)
+    result = solveInverseKinematics([xEq,yEq,zEq])
+
+    # result = solve([xEq, yEq, zEq], dict=True)
+
+    # for i in range(len(result)):
+    #     for key, value in result[i].items():
+    #         stringKey = f'{key}'
+    #         if stringKey[0] == 'θ':
+    #             result[i][key] = N(value*180/pi, 5)
+    #         else:
+    #             result[i][key] = N(value, 5)
+    print()
+    print(result)
+    print()
+
+def multiplyMatrices(A_Matrices):
+    result = A_Matrices[0]
+    n = len(A_Matrices)
+    for i in range(1, n):
+        result = np.dot(result, A_Matrices[i])
+    return result
+
+def solveInverseKinematics(equations):
+    result = solve(equations, dict=True)
 
     for i in range(len(result)):
         for key, value in result[i].items():
@@ -61,25 +84,8 @@ def inverse_kinematics(*args, **kwargs):
                 result[i][key] = N(value*180/pi, 5)
             else:
                 result[i][key] = N(value, 5)
-    print()
-    print(result)
-    print()
-
-    # counter = 0
-    # for i in range(len(homoT)):
-    #     for j in range(4):
-    #         print(type (homoT[i][j]) != np.number)
-    #         print(homoT[i][j].round(2))
-    #         counter=counter +1
-    # print(counter)
-
-
-def multiplyMatrices(A_Matrices):
-    result = A_Matrices[0]
-    n = len(A_Matrices)
-    for i in range(1, n):
-        result = np.dot(result, A_Matrices[i])
     return result
+
 
 # Examples:
 

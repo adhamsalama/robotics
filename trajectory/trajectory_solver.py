@@ -1,14 +1,18 @@
 from inverse.symMatrixA import symMatrixA
 from inverse.RollPithYaw import RollPithYaw
 from inverse.inverse_kinematics import multiplyMatrices
+from inverse.inverse_kinematics import solveInverseKinematics
 from sympy import *
 
 # x, y, x', y'
-x_val = []
-y_val = []
-xx_val = []
-yy_val = []
-
+x = []
+y = []
+z = []
+xDot = []
+yDot = []
+zDot = []
+θ1 = []
+θ2 = []
 
 def trajectory(*args, **kwargs):
     robotArrangement = input('Enter the robot arrangement (eg. RRP): ')
@@ -25,24 +29,27 @@ def trajectory(*args, **kwargs):
             newD = symbols(f'd{i + 1}')
             d = newD
         A_Matrices.append(symMatrixA(a, alpha, d, theta))
+
     homoT = multiplyMatrices([a.matrix for a in A_Matrices])
-
-    Xe, Ye, Ze, Φ, θ, Ψ = [float(i) for i in input(
-        f'Enter End-effector pose (Xe, Ye, Ze, Φ, θ, Ψ): ').split(' ')]
-
-    RBY = RollPithYaw(Φ, θ, Ψ)
+    
     x_equation = sympify(input('Enter the x equation: '))
     y_equation = sympify(input('Enter the y equation: '))
     interval_list = input('Enter the interval: ').strip().split(' ')
     table = [] * len(interval_list)
+
     solve_equation(x_equation, y_equation, interval_list)
+    
+    getJointAngels(homoT, interval_list)
+    
     for interval in range(len(interval_list)):
         table.append({
             't': interval_list[interval],
-            'x': x_val[interval],
-            'y': y_val[interval],
-            'x_dot': xx_val[interval],
-            'y_dot': yy_val[interval]
+            'x': x[interval],
+            'y': y[interval],
+            'θ1': θ1[interval],
+            'θ2': θ2[interval],
+            'x_dot': xDot[interval],
+            'y_dot': yDot[interval]
         })
 
     for i in range(len(table)):
@@ -59,11 +66,28 @@ def solve_equation(expX, expY, interval_list):
 
     # substitution by interval list
     for i in range(len(interval_list)):
-        x_val.append(expX.subs(t, float(interval_list[i]) * pi / 180))
-        y_val.append(expY.subs(t, float(interval_list[i]) * pi / 180))
-        xx_val.append(exp_difX.subs(t, float(interval_list[i]) * pi / 180))
-        yy_val.append(exp_difY.subs(t, float(interval_list[i]) * pi / 180))
+        x.append(N(float(expX.subs(t, float(interval_list[i]) * pi / 180)),5))
+        y.append(N(float(expY.subs(t, float(interval_list[i]) * pi / 180)),5))
+        xDot.append(N(float(exp_difX.subs(t, float(interval_list[i]) * pi / 180)),5))
+        yDot.append(N(float(exp_difY.subs(t, float(interval_list[i]) * pi / 180)),5))
 
-    print('\nexpression X after differentiation: ', format(exp_difX))
-    print('expression Y after differentiation: ', format(exp_difY))
+def getJointAngels(homoT, interval_list):
+    # substitution by interval list
+    for i in range(len(interval_list)):
+        firstAngle = []
+        secondAngle = []
+        # Position matrix equations
+        xEq = Eq(homoT[0][3], x[i])
+        yEq = Eq(homoT[1][3], y[i])
+        # zEq = Eq(homoT[2][3], z[i])
+        result = solveInverseKinematics([xEq,yEq])
 
+        for i in range(len(result)):
+            for key, value in result[i].items():
+                stringKey = f'{key}'
+                if stringKey == 'θ1':
+                    firstAngle.append(result[i][key])
+                else:
+                    secondAngle.append(result[i][key])
+        θ1.append(firstAngle)
+        θ2.append(secondAngle)
