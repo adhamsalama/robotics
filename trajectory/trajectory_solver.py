@@ -3,6 +3,12 @@ from inverse.RollPithYaw import RollPithYaw
 from inverse.inverse_kinematics import multiplyMatrices
 from sympy import *
 
+# x, y, x', y'
+x_val = []
+y_val = []
+xx_val = []
+yy_val = []
+
 
 def trajectory(*args, **kwargs):
     robotArrangement = input('Enter the robot arrangement (eg. RRP): ')
@@ -29,16 +35,18 @@ def trajectory(*args, **kwargs):
     y_equation = sympify(input('Enter the y equation: '))
     interval_list = input('Enter the interval: ').strip().split(' ')
     table = [] * len(interval_list)
-    for interval in interval_list:
-        table.append({
-            't': interval,
-            'x': round(float(x_equation.evalf(subs={'t': interval})), 3),
-            'y': round(float(y_equation.evalf(subs={'t': interval})), 3),
-            'x_dot': None,
-            'y_dot': None
-        })
-    print(table, "\n")
     solve_equation(x_equation, y_equation, interval_list)
+    for interval in range(len(interval_list)):
+        table.append({
+            't': interval_list[interval],
+            'x': x_val[interval],
+            'y': y_val[interval],
+            'x_dot': xx_val[interval],
+            'y_dot': yy_val[interval]
+        })
+
+    for i in range(len(table)):
+        print(table[i])
 
 
 def solve_equation(expX, expY, interval_list):
@@ -49,12 +57,6 @@ def solve_equation(expX, expY, interval_list):
     # expY differentiation
     exp_difY = diff(expY, t)
 
-    # x, y, x', y'
-    x_val = []
-    y_val = []
-    xx_val = []
-    yy_val = []
-
     # substitution by interval list
     for i in range(len(interval_list)):
         x_val.append(expX.subs(t, float(interval_list[i]) * pi / 180))
@@ -62,10 +64,6 @@ def solve_equation(expX, expY, interval_list):
         xx_val.append(exp_difX.subs(t, float(interval_list[i]) * pi / 180))
         yy_val.append(exp_difY.subs(t, float(interval_list[i]) * pi / 180))
 
-    print('expression X after differentiation: ', format(exp_difX))
+    print('\nexpression X after differentiation: ', format(exp_difX))
     print('expression Y after differentiation: ', format(exp_difY))
 
-    print("\nX values: ", x_val)
-    print("y values: ", y_val)
-    print("X' values: ", xx_val)
-    print("Y' values: ", yy_val)
