@@ -9,6 +9,7 @@ from sympy import *
 from forward.A_matrix import A_matrix
 from inverse_jacobian.inverse_jacobian_function import calc_inverse_jacobian, rotate
 import numpy as np
+from math import sin, cos, pi
 
 # x, y, x', y'
 x = []
@@ -67,40 +68,8 @@ def trajectory(*args, **kwargs):
     #         'θ2_dot': θ2Dot[interval]
     #     })
     
-    a0,a1,a2,a3, t= symbols('a0 a1 a2 a3 t')
-    ax=np.array([N(θ1[0][0]*pi/180,5),θ1Dot[0][0],a2,a3])
-    ax = ax.transpose()
-    e = [[1,0,0,0],[0,1,0,0],
-    [1,pi/8,np.power(pi,2)/64,np.power(pi,3)/512],
-    [0,1,pi/4,np.power(pi,2)*3/64]
-    ]
-    res = np.dot(e,ax)
-    a0 = N(θ1[0][0]*pi/180,5)
-    a1 = N(θ1Dot[0][0],5)
-    eq1 = Eq(res[2],N(θ1[1][0]*pi/180, 5))
-    eq2 = Eq(res[3],θ1Dot[1][0])
-    r = solve([eq1,eq2],[a2,a3])
-    a2 = N(r[a2],5)
-    a3 = N(r[a3],5)
-
-    b0,b1,b2,b3, t= symbols('b0 b1 b2 b3 t')
-    ax=np.array([N(θ2[0][0]*pi/180,5),θ2Dot[0][0],b2,b3])
-    resθ2 = np.dot(e,ax)
-    b0 = N(θ2[0][0]*pi/180,5)
-    b1 = N(θ2Dot[0][0],5)
-    eq1θ2 = Eq(resθ2[2],N(θ2[1][0]*pi/180,5))
-    eq2θ2 = Eq(resθ2[3],θ2Dot[1][0])
-    rθ2 = solve([eq1θ2,eq2θ2],[b2,b3])
-    b2 = N(rθ2[b2],5)
-    b3 = N(rθ2[b3],5)
-    print()
     for i in range(len(table)):
         print(table[i])
-    print()
-    print(f'θ1(t) ={a0+a1*t+a2*np.power(t,2),+a3*np.power(t,3)}')
-    print(f'θ2(t) ={b0+b1*t+b2*np.power(t,2),+b3*np.power(t,3)}')
-
-
 
         
 def solve_equation(table, expX, expY, interval_list):
@@ -148,6 +117,7 @@ def getJointsVariables(table, homoT, interval_list):
                     secondAngle.append(result[j][key])
         θ1.append(firstAngle)
         θ2.append(secondAngle)
+        
         
 def calc_θDot(params,i):
     θ1Dot.append([])
