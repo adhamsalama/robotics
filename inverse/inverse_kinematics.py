@@ -2,8 +2,6 @@ from inverse.symMatrixA import symMatrixA
 from inverse.RollPithYaw import RollPithYaw
 import numpy as np
 from sympy import *
-# from math import pi
-
 
 def inverse_kinematics(*args, **kwargs):
 
@@ -54,15 +52,6 @@ def inverse_kinematics(*args, **kwargs):
 
     result = solveInverseKinematics([xEq,yEq,zEq])
 
-    # result = solve([xEq, yEq, zEq], dict=True)
-
-    # for i in range(len(result)):
-    #     for key, value in result[i].items():
-    #         stringKey = f'{key}'
-    #         if stringKey[0] == 'θ':
-    #             result[i][key] = N(value*180/pi, 5)
-    #         else:
-    #             result[i][key] = N(value, 5)
     print()
     print(result)
     print()
@@ -86,31 +75,3 @@ def solveInverseKinematics(equations):
                 result[i][key] = N(value, 5)
     return result
 
-
-# Examples:
-
-    # Input:
-    # RR
-    # [ 2 0 0 ]
-    # [ 2 0 0 ]
-    # Xe = 2.25  Ye = 2.94
-    # Output:
-    # [{θ1: 30.323, θ2: 44.499}, {θ1: 74.823, θ2: -44.499}]
-
-    # Input:
-    # RPP
-    # [ 0 0 0.1 ]
-    # [ 0 -90 0 ]
-    # [ 0 0 0 ]
-    # Xe = -0.1    Ye = 0   Ze = 0.2
-    # Output:
-    # [{θ1: 270.00, d3: -0.10000, d2: 0.10000}, {θ1: 90.000, d3: 0.10000, d2: 0.10000}]
-
-    # RPP
-    # [ 0 0 1 ]
-    # [ 0 -90 0 ]
-    # [ 0 0 0 ]
-    # Xe = 1    Ye = -1.2   Ze = 2
-    # θ1 values in degree  = 39.806
-    # d2 values in degree = 1.0000
-    # d3 values in degree = 1.5620
