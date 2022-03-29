@@ -2,30 +2,18 @@
 
 ## Forward kinematics function (FK)
 
-**Description**: Forward kinematics is the use of kinematic equations to determine the position and orientation of the end effector.  
-**Input**: Joint Variables, its DH parameter table.  
-**Output**: Homogenous matrix include position and orientation of the end effector and Xe, Ye, Ze, Φ, θ, Ψ values.  
+**Description**: Forward kinematics function uses generalized kinematic equations to determine the position and orientation of the end effector.  
+**Input**: Number of robot joints and its DH parameter table.  
+**Output**: Homogeneous transformation matrix include position and orientation of the end effector and Xe, Ye, Ze, Φ, θ, Ψ values.  
 **Examples**:
 
-1. **Input**:  
-   No of Joints:<br> n<br>
-   Joints Variables:<br> [a, alpha, d, theta]
+1. Two-link serial manipulator with RR arrangement
 
-   DH parameter table:  
-    [ 2 0 0 30.323 ]  
-    [ 2 0 0 44.499]
+   ![rrFK](images/rrFK.png)
 
-   **Output**:<br>
-   T = <br>
-   [ 0.262 -0.965 0. 2.25 ]<br>
-   [ 0.965 0.262 0. 2.94 ]<br>
-   [ 0. 0. 1. 0. ]<br>
-   [ 0. 0. 0. 1. ]<br>
+2. Three-link serial manipulator with RPP arrangement.
 
-   Xe Ye Ze : [2.25, 2.94, 0.0]<br>
-   Θ, Φ, Ψ : [0.0, 74.81021283021661, 0.0]
-
-![Capture](https://user-images.githubusercontent.com/47748059/160618691-53d399bb-3284-4498-b7c2-adddc9813fe4.PNG)
+   ![rppFK](images/rppFK.png)
 
 ## Inverse kinematics function (IK)
 
@@ -34,122 +22,51 @@
 **Output**: Joint variables.  
 **Examples**:
 
-1. **Input**:  
-   Robot arrangement:  
-   RR  
-   DH parameter table:  
-    [ 2 0 0 ]  
-    [ 2 0 0 ]  
-   End-effector pose:  
-   Xe = 2.25, Ye = 2.94, Ze=0, Φ=0, θ=0, Ψ=0
+1. Two-link serial manipulator with RR arrangement
 
-   **Output**:  
-   [{θ1: 30.323, θ2: 44.499}, {θ1: 74.823, θ2: -44.499}]
+   ![rrIK](images/rrIK.png)
 
-![RR IK](images/rrIK.png)
+2. Three-link serial manipulator with RPP arrangement.
 
-2. **Input**:  
-   Robot arrangement:
-   RPP  
-   DH parameter table:  
-   [ 0 0 0.1 ]  
-   [ 0 -90 0 ]  
-   [ 0 0 0 ]  
-   End-effector pose:  
-   Xe = -0.1 Ye = 0 Ze = 0.2
-
-   **Output**:  
-   [{θ1: 270.00, d3: -0.10000, d2: 0.10000}, {θ1: 90.000, d3: 0.10000, d2: 0.10000}]
-
-   ![RR IK](images/rppIK.png)
+   ![rppIK](images/rppIK.png)
 
 ## Forward jacobian function (FJ)
 
-**Description**: Jacobian is the use to discripe velocity of a serial manipulator to reach a desired position.  
+**Description**: Forward jacobian is the use to describe velocity of a serial manipulator to reach a desired position.
 **Input**: Robot arrangement, its DH parameter table.  
 **Output**: Jacobian matrix.  
 **Example**:
 
-1. **Input**:  
-   Robot arrangement:  
-   RR  
-   DH parameter table:  
-    [ 2 0 0 -20.4]  
-    [ 2 0 0 84.6]
+1. Two-link serial manipulator with RR arrangement
 
-   **Output**:
+   ![rrFJ](images/rrFJ.png)
 
-   ```
-   -1.103  -1.801
-   2.745   0.87
-   0.0     0.0
-   0       0.0
-   0       0.0
-   1       1.0
-   ```
+2. Three-link serial manipulator with RPP arrangement.
 
-![RR JAC](images/jacobian.png)
-
-2. **Input**:  
-    Robot arrangement:  
-    RPP
-   DH parameter table:  
-    [ 0 0 0.3 90]  
-    [ 0 -90 0.5 0]
-   [ 0 0 0.5 0]
-
-   **Output**:
-
-   ```
-   0.0     0.0     -1.0
-   -0.5    -0.0    0.0
-   0.0     1.0     0.0
-   0       0       0
-   0       0       0
-   1       0       0
-   ```
-
-   ![RPP JAC](images/jacobian2.png)
+   ![rppFJ](images/rppFJ.png)
 
 ## Inverse jacobian function (FJ)
 
-**Description**: Inverse jacobian helps to descripe the motion of a serial manipulator through a certian path with a certain velocity.
+**Description**: Inverse jacobian helps to describe the motion of a serial manipulator through a certain path with a certain velocity.
 **Input**: Robot arrangement, its DH parameter table.  
 **Output**: Inverse Jacobian matrix.  
 **Example**:
 
-1. **Input**:  
-   Robot arrangement:  
-   RR  
-   DH parameter table:  
-    [ 2 0 0 -20.4]  
-    [ 2 0 0 84.6]
+1. Two-link serial manipulator with RR arrangement
 
-   **Output**:
+   ![rrIJ](images/rrIJ.png)
 
-   ```
-   0.21    0.455   0.0     0.0     0.0     -0.019
-   -0.585  -0.315  0.0     0.0     0.0     0.22
-   ```
+2. Three-link serial manipulator with RPP arrangement.
 
-![RR INV_JAC](images/inverse_jacobian.png)
-
-2. **Input**:  
-   Robot arrangement:  
-   RPP  
-   DH parameter table:  
-    [ 0 0 0.3 90]  
-    [ 0 -90 0.5 0]
-   [ 0 0 0.5 0]
-
-   **Output**:
-
-   ```
-   0.0     -0.4    0.0     0.0     0.0     0.8
-   0.0     0.0     1.0     0.0     0.0     0.0
-   -1.0    0.0     0.0     0.0     0.0     0.0
-   ```
-
-![RPP INV_JAC](images/inverseJacobian2.jpeg)
+   ![rppIJ](images/rppIJ.png)
 
 ## Trajectory planning function (TP)
+
+**Description**: A path is a sequence of points. Trajectory is a path with time history (velocities and accelerations). Trajectory planning is to relate the end effector trajectory with joints trajectories.  
+**Input**: Robot arrangement, its DH parameter table, end-effector trajectory equations, time interval.  
+**Output**: Joint variables function in terms of time.  
+**Example**:
+
+1. Two-link serial manipulator with RR arrangement
+
+   ![rrTP](images/rrTP.png)
