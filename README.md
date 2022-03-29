@@ -2,9 +2,9 @@
 
 ## Forward kinematics function (FK)
 
-**Description**:<br> Forward kinematics is the use of kinematic equations to determine the position and orientation of the end effector.  
-**Input**:<br> Joint Variables, its DH parameter table.  
-**Output**:<br> Homogenous matrix include position and orientation of the end effector and Xe, Ye, Ze, Φ, θ, Ψ values.  
+**Description**: Forward kinematics is the use of kinematic equations to determine the position and orientation of the end effector.  
+**Input**: Joint Variables, its DH parameter table.  
+**Output**: Homogenous matrix include position and orientation of the end effector and Xe, Ye, Ze, Φ, θ, Ψ values.  
 **Examples**:
 
 1. **Input**:  
