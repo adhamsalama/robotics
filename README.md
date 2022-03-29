@@ -2,6 +2,33 @@
 
 ## Forward kinematics function (FK)
 
+**Description**:<br> Forward kinematics is the use of kinematic equations to determine the position and orientation of the end effector.  
+**Input**:<br> Joint Variables, its DH parameter table.  
+**Output**:<br> Homogenous matrix include position and orientation of the end effector and Xe, Ye, Ze, Φ, θ, Ψ values.  
+**Examples**:
+
+1. **Input**:  
+   No of Joints:<br> n<br>
+   Joints Variables:<br> [a, alpha, d, theta]
+    
+   DH parameter table:  
+    [ 2 0 0 30.323 ]  
+    [ 2 0 0 44.499]  
+   
+   **Output**:<br>
+   T = <br>
+   [ 0.262 -0.965  0.     2.25 ]<br>
+   [ 0.965  0.262  0.     2.94 ]<br>
+   [ 0.     0.     1.     0.   ]<br>
+   [ 0.     0.     0.     1.   ]<br>
+   
+   Xe Ye Ze : [2.25, 2.94, 0.0]<br>
+   Θ, Φ, Ψ :  [0.0, 74.81021283021661, 0.0]
+
+![Capture](https://user-images.githubusercontent.com/47748059/160618691-53d399bb-3284-4498-b7c2-adddc9813fe4.PNG)
+
+
+
 ## Inverse kinematics function (IK)
 
 **Description**: Inverse kinematics is the use of kinematic equations to determine the motion of a serial manipulator to reach a desired position.  
