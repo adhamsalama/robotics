@@ -1,6 +1,4 @@
 from curses import A_DIM
-
-from matplotlib.pyplot import table
 from inverse.symMatrixA import symMatrixA
 from inverse.RollPithYaw import RollPithYaw
 from inverse.inverse_kinematics import multiplyMatrices
@@ -10,6 +8,7 @@ from forward.A_matrix import A_matrix
 from inverse_jacobian.inverse_jacobian_function import calc_inverse_jacobian, rotate
 import numpy as np
 from math import sin, cos, pi
+import matplotlib.pyplot as plt
 
 # x, y, x', y'
 x = []
@@ -22,7 +21,7 @@ zDot = []
 θ2 = []
 θ1Dot = []
 θ2Dot = []
-
+rang = 0
 def trajectory(*args, **kwargs):
     params = []
     robotArrangement = input('Enter the robot arrangement (eg. RRP): ')
@@ -48,31 +47,85 @@ def trajectory(*args, **kwargs):
     interval_list = input('Enter the interval: ').strip().split(' ')
     table = [] * len(interval_list)
 
-    solve_equation(table, x_equation, y_equation, interval_list)
+    solve_equation(x_equation, y_equation, interval_list)
     
-    getJointsVariables(table, homoT, interval_list)
+    getJointAngels(homoT, interval_list)
     
     for interval in range(len(interval_list)):
         calc_θDot(params, interval)
     
-    # for interval in range(len(interval_list)):
-    #     table.append({
-    #         't': interval_list[interval],
-    #         'x': x[interval],
-    #         'y': y[interval],
-    #         'θ1': θ1[interval],
-    #         'θ2': θ2[interval],
-    #         'x_dot': xDot[interval],
-    #         'y_dot': yDot[interval],
-    #         'θ1_dot': θ1Dot[interval],
-    #         'θ2_dot': θ2Dot[interval]
-    #     })
+    for interval in range(len(interval_list)):
+        table.append({
+            't': interval_list[interval],
+            'x': x[interval],
+            'y': y[interval],
+            'θ1': θ1[interval],
+            'θ2': θ2[interval],
+            'x_dot': xDot[interval],
+            'y_dot': yDot[interval],
+            'θ1_dot': θ1Dot[interval],
+            'θ2_dot': θ2Dot[interval]
+        })
     
+    a0,a1,a2,a3, t= symbols('a0 a1 a2 a3 t')
+    ax=np.array([N(θ1[0][0]*pi/180,5),θ1Dot[0][0],a2,a3])
+    ax = ax.transpose()
+    e = [[1,0,0,0],[0,1,0,0],
+    [1,pi/8,np.power(pi,2)/64,np.power(pi,3)/512],
+    [0,1,pi/4,np.power(pi,2)*3/64]
+    ]
+    res = np.dot(e,ax)
+    a0 = N(θ1[0][0]*pi/180,5)
+    a1 = N(θ1Dot[0][0],5)
+    eq1 = Eq(res[2],N(θ1[1][0]*pi/180, 5))
+    eq2 = Eq(res[3],θ1Dot[1][0])
+    r = solve([eq1,eq2],[a2,a3])
+    a2 = N(r[a2],5)
+    a3 = N(r[a3],5)
+
+    b0,b1,b2,b3, t= symbols('b0 b1 b2 b3 t')
+    ax=np.array([θ2[0][0]*pi/180,θ2Dot[0][0],b2,b3])
+    resθ2 = np.dot(e,ax)
+    b0 = N(θ2[0][0]*pi/180,5)
+    b1 = N(θ2Dot[0][0],5)
+    eq1θ2 = Eq(resθ2[2],N(θ2[1][0]*pi/180,5))
+    eq2θ2 = Eq(resθ2[3],θ2Dot[1][0])
+    rθ2 = solve([eq1θ2,eq2θ2],[b2,b3])
+    b2 = N(rθ2[b2],5)
+    b3 = N(rθ2[b3],5)
     for i in range(len(table)):
         print(table[i])
+    
+    firstEquestion = a0+a1*t+a2*np.power(t,2)+a3*np.power(t,3)
+    secondEquestion = b0+b1*t+b2*np.power(t,2)+b3*np.power(t,3)
+    velocity1 = diff(firstEquestion)
+    accelration1 = diff(velocity1)
+    velocity2 = diff(secondEquestion)
+    accelration2 = diff(velocity2)
+    print(f'Postionθ1 ={firstEquestion}')
+    print(f'velocityθ1 ={velocity1}')
+    print(f'accelrationθ1 ={accelration1}')
+    print(f'Postionθ2 ={secondEquestion}')
+    print(f'velocityθ2 ={velocity2}')
+    print(f'accelrationθ2 ={accelration2}')
+    
+    # plt.plot(velocity)
+    # plt.ylabel('some numbers')
+    # plt.show()
+    #p1  = plot(firstEquestion,xlim=[0,pi/8],ylim=[0,pi/8]) # postion
+    # p2 = plot(velocity)
+    # p3 = plot(accelration)
+    # p2 = plot(secondEquestion)
+    # p3 = plot(firstEquestion,secondEquestion)
+   
+    # p1.show()
+    # p2.show()
+    # p3.show()
+    
+
 
         
-def solve_equation(table, expX, expY, interval_list):
+def solve_equation(expX, expY, interval_list):
     t = symbols('t')
 
     # expX differentiation
@@ -86,13 +139,9 @@ def solve_equation(table, expX, expY, interval_list):
         y.append(N(float(expY.subs(t, float(interval_list[i]) * pi / 180)),5))
         xDot.append(N(float(exp_difX.subs(t, float(interval_list[i]) * pi / 180)),5))
         yDot.append(N(float(exp_difY.subs(t, float(interval_list[i]) * pi / 180)),5))
-        table.append({"t": N(float(interval_list[i]) * pi / 180,5)})
-        table[i]["x"] = N(float(expX.subs(t, float(interval_list[i]) * pi / 180)),5)
-        table[i]["y"] = N(float(expY.subs(t, float(interval_list[i]) * pi / 180)),5)
-        table[i]["xDot"] = N(float(exp_difX.subs(t, float(interval_list[i]) * pi / 180)),5)
-        table[i]["yDot"] = N(float(exp_difY.subs(t, float(interval_list[i]) * pi / 180)),5)
 
-def getJointsVariables(table, homoT, interval_list):
+
+def getJointAngels(homoT, interval_list):
     # substitution by interval list
     for i in range(len(interval_list)):
         firstAngle = []
@@ -103,18 +152,13 @@ def getJointsVariables(table, homoT, interval_list):
         # zEq = Eq(homoT[2][3], z[i])
         result = solveInverseKinematics([xEq,yEq])
 
-        for j in range(len(result)):
-            for key, value in result[j].items():
+        for i in range(len(result)):
+            for key, value in result[i].items():
                 stringKey = f'{key}'
-                if stringKey not in table[i]:
-                    table[i][stringKey]= [(result[j][key])]
-                else:
-                    table[i][stringKey].append(result[j][key])
-
                 if stringKey == 'θ1':
-                    firstAngle.append(result[j][key])
+                    firstAngle.append(result[i][key])
                 else:
-                    secondAngle.append(result[j][key])
+                    secondAngle.append(result[i][key])
         θ1.append(firstAngle)
         θ2.append(secondAngle)
         
