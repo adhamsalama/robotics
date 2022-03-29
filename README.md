@@ -40,6 +40,52 @@
 
 ## Forward jacobian function (FJ)
 
+**Description**: Jacobian is the use to discripe velocity of a serial manipulator to reach a desired position.  
+**Input**: Robot arrangement, its DH parameter table.  
+**Output**: Joint variables.  
+**Example**:
+
+1. **Input**:  
+   Robot arrangement:  
+   RR  
+   DH parameter table:  
+    [ 2 0 0 -20.4]  
+    [ 2 0 0 84.6]
+
+   **Output**:
+
+   ```
+   -1.103 -1.801
+   2.745  0.87
+   0.0    0.0
+   0      -0.0
+   0      -0.0
+   1      1.0
+   ```
+
+![RR JAC](images/jacobian.png)
+
 ## Inverse jacobian function (FJ)
+
+**Description**: Inverse jacobian helps to descripe the motion of a serial manipulator through a certian path with a certain velocity.
+**Input**: Robot arrangement, its DH parameter table.  
+**Output**: Joint variables.  
+**Example**:
+
+1. **Input**:  
+   Robot arrangement:  
+   RR  
+   DH parameter table:  
+    [ 2 0 0 -20.4]  
+    [ 2 0 0 84.6]
+
+   **Output**:
+
+   ```
+   0.21    0.455   0.0     0.0     0.0     -0.019
+   -0.585  -0.315  0.0     0.0     0.0     0.22
+   ```
+
+![RR INV_JAC](images/inverse_jacobian.png)
 
 ## Trajectory planning function (TP)
