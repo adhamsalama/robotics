@@ -35,6 +35,9 @@ def calc_jacobian(robotArrangement, matrices):
                 jac[j].append(round(zVector[i][j], 3))
             for j in range(3, 6):
                 jac[j].append(0)
+    for i in range(len(jac)):
+        for j in range(len(jac[0])):
+            jac[i][j] += 0
     return jac
 
 

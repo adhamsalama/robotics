@@ -67,7 +67,7 @@
 
 **Description**: Jacobian is the use to discripe velocity of a serial manipulator to reach a desired position.  
 **Input**: Robot arrangement, its DH parameter table.  
-**Output**: Joint variables.  
+**Output**: Jacobian matrix.  
 **Example**:
 
 1. **Input**:  
@@ -80,12 +80,12 @@
    **Output**:
 
    ```
-   -1.103 -1.801
-   2.745  0.87
-   0.0    0.0
-   0      -0.0
-   0      -0.0
-   1      1.0
+   -1.103  -1.801
+   2.745   0.87
+   0.0     0.0
+   0       0.0
+   0       0.0
+   1       1.0
    ```
 
 ![RR JAC](images/jacobian.png)
@@ -109,13 +109,13 @@
    1       0       0
    ```
 
-   ![RPP JAC](images/jacobian2.jpeg)
+   ![RPP JAC](images/jacobian2.png)
 
 ## Inverse jacobian function (FJ)
 
 **Description**: Inverse jacobian helps to descripe the motion of a serial manipulator through a certian path with a certain velocity.
 **Input**: Robot arrangement, its DH parameter table.  
-**Output**: Joint variables.  
+**Output**: Inverse Jacobian matrix.  
 **Example**:
 
 1. **Input**:  
