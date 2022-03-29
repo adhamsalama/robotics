@@ -10,24 +10,22 @@
 1. **Input**:  
    No of Joints:<br> n<br>
    Joints Variables:<br> [a, alpha, d, theta]
-    
+
    DH parameter table:  
     [ 2 0 0 30.323 ]  
-    [ 2 0 0 44.499]  
-   
+    [ 2 0 0 44.499]
+
    **Output**:<br>
    T = <br>
-   [ 0.262 -0.965  0.     2.25 ]<br>
-   [ 0.965  0.262  0.     2.94 ]<br>
-   [ 0.     0.     1.     0.   ]<br>
-   [ 0.     0.     0.     1.   ]<br>
-   
+   [ 0.262 -0.965 0. 2.25 ]<br>
+   [ 0.965 0.262 0. 2.94 ]<br>
+   [ 0. 0. 1. 0. ]<br>
+   [ 0. 0. 0. 1. ]<br>
+
    Xe Ye Ze : [2.25, 2.94, 0.0]<br>
-   Θ, Φ, Ψ :  [0.0, 74.81021283021661, 0.0]
+   Θ, Φ, Ψ : [0.0, 74.81021283021661, 0.0]
 
 ![Capture](https://user-images.githubusercontent.com/47748059/160618691-53d399bb-3284-4498-b7c2-adddc9813fe4.PNG)
-
-
 
 ## Inverse kinematics function (IK)
 
@@ -92,6 +90,27 @@
 
 ![RR JAC](images/jacobian.png)
 
+2. **Input**:  
+    Robot arrangement:  
+    RPP
+   DH parameter table:  
+    [ 0 0 0.3 90]  
+    [ 0 -90 0.5 0]
+   [ 0 0 0.5 0]
+
+   **Output**:
+
+   ```
+   0.0     0.0     -1.0
+   -0.5    -0.0    0.0
+   0.0     1.0     0.0
+   0       0       0
+   0       0       0
+   1       0       0
+   ```
+
+   ![RPP JAC](images/jacobian2.jpeg)
+
 ## Inverse jacobian function (FJ)
 
 **Description**: Inverse jacobian helps to descripe the motion of a serial manipulator through a certian path with a certain velocity.
@@ -114,5 +133,23 @@
    ```
 
 ![RR INV_JAC](images/inverse_jacobian.png)
+
+2. **Input**:  
+   Robot arrangement:  
+   RPP  
+   DH parameter table:  
+    [ 0 0 0.3 90]  
+    [ 0 -90 0.5 0]
+   [ 0 0 0.5 0]
+
+   **Output**:
+
+   ```
+   0.0     -0.4    0.0     0.0     0.0     0.8
+   0.0     0.0     1.0     0.0     0.0     0.0
+   -1.0    0.0     0.0     0.0     0.0     0.0
+   ```
+
+![RPP INV_JAC](images/inverseJacobian2.jpeg)
 
 ## Trajectory planning function (TP)
